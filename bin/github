@@ -1,0 +1,68 @@
+#!/bin/bash
+
+check_brew() {
+    if ! command -v brew &>/dev/null; then
+        echo "Homebrew is not installed. Installing Homebrew..."
+        # Install Homebrew
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        # Check if the installation was successful
+        if ! command -v brew &>/dev/null; then
+            echo "Homebrew installation failed. Please install it manually: https://brew.sh/"
+            exit 1
+        fi
+        echo "Homebrew has been installed successfully."
+    else
+        echo "Homebrew is already installed."
+    fi
+}
+
+check_gh_cli() {
+    if ! command -v gh &>/dev/null; then
+        echo "GitHub CLI is not installed. Installing GitHub CLI..."
+        # Install GitHub CLI using Homebrew
+        brew install gh
+    else
+        echo "GitHub CLI is already installed."
+    fi
+}
+
+authenticate_gh_cli() {
+    if ! gh auth status &>/dev/null; then
+        echo "Not authenticated with GitHub. Authenticating..."
+        gh auth login
+    else
+        echo "Already authenticated with GitHub."
+    fi
+}
+
+SSH_KEY_PATH="$HOME/.ssh/id_rsa"
+KEY_NAME="github_key"
+GITHUB_API_URL="https://api.github.com/user/keys"
+GH_USER="$(gh api user | jq -r '.login')"
+
+check_brew
+
+check_gh_cli
+
+authenticate_gh_cli
+
+if [[ ! -f "$SSH_KEY_PATH" ]]; then
+    echo "SSH key not found. Generating SSH key..."
+    ssh-keygen -t rsa -b 4096 -C "$GH_USER@github.com" -f "$SSH_KEY_PATH" -N ""
+else
+    echo "SSH key already exists at $SSH_KEY_PATH."
+fi
+
+eval "$(ssh-agent -s)"
+
+ssh-add "$SSH_KEY_PATH"
+
+PUB_KEY=$(cat "$SSH_KEY_PATH.pub")
+
+echo "Adding SSH key to GitHub..."
+curl -u "$GH_USER" -X POST -H "Accept: application/vnd.github.v3+json" \
+    -d "{\"title\":\"$KEY_NAME\",\"key\":\"$PUB_KEY\"}" \
+    "$GITHUB_API_URL"
+
+echo "SSH key added successfully to GitHub!"
+

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Define the settings to be added
+vim_settings='
+" Vim settings for line numbers, search, and indentation
+set relativenumber  " Relative line numbers
+set incsearch       " Show search results incrementally
+set hlsearch        " Highlight search results
+set autoindent      " Maintain indentation level
+set expandtab       " Use spaces instead of tabs
+set tabstop=4       " Number of spaces per tab
+set shiftwidth=4    " Number of spaces for autoindent
+set relativenumber  " Relative line numbers
+set wrap
+set linebreak
+set textwidth=120
+'
+
+# Define the path to the .vimrc file
+VIMRC="$HOME/.vimrc"
+echo "Added Vim settings to .vimrc..."
+echo "$vim_settings" > "$VIMRC"
+

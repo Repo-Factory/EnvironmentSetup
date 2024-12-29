@@ -1,0 +1,22 @@
+#!/bin/bash
+
+BIN_DIR="$HOME/bin"
+
+mkdir -p "$BIN_DIR"
+
+echo "Installing scripts..."
+
+cp -r ./bin/* "$BIN_DIR/"
+
+if ! grep -q "$BIN_DIR" "$HOME/.bashrc"; then
+  echo "Adding $BIN_DIR to PATH in .bashrc"
+  echo "export PATH=\"$BIN_DIR:\$PATH\"" >> "$HOME/.bashrc"
+fi
+
+source "$HOME/.bashrc"
+chmod +x $BIN_DIR/*
+
+echo "Installation complete. You can now use your commands globally."
+
+setup-vim
+setup-plugins
