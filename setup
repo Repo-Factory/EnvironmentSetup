@@ -18,5 +18,5 @@ chmod +x $BIN_DIR/*
 
 echo "Installation complete. You can now use your commands globally."
 
-setup-vim
-setup-plugins
+vim
+plugins
