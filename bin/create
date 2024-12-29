@@ -1,20 +1,15 @@
 #!/bin/bash
 
-# Prompt for the script name
-read -p "Enter the script name (with extension, e.g., script.sh): " script_name
+read -p "Enter the script name (with extension, e.g. script.sh): " script_name
 
-# Create the script file
-touch "$script_name"
+mkdir -p "$HOME/bin"
+touch "$HOME/bin/$script_name"
 
-# Prompt for the script content
 echo "Enter the script content. Press Ctrl+D when you're done."
 
-# Open the file in the editor to allow writing content
-cat > "$script_name"
+cat > "$HOME/bin/$script_name"
 
-# Make the script executable
-chmod +x "$script_name"
+chmod +x "$HOME/bin/$script_name"
 
-# Notify the user
-echo "$script_name has been created and made executable."
+echo "$script_name has been created and made executable in $HOME/bin."
 
